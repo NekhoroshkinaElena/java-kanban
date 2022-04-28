@@ -1,30 +1,35 @@
 package tasks;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Epic extends Task {
-    private final ArrayList<Subtask> subtasks = new ArrayList<>();
+    private final ArrayList<Integer> subtasks = new ArrayList<>();
+    private final HashMap<Integer,Status> statuses = new HashMap<>();
 
     public Epic(int id, String name, String description) {
         super(id, name, description);
     }
 
     public void addSubtask(Subtask subtask) {
-        subtasks.add(subtask);
+        statuses.put(subtask.getId(), subtask.getStatus());
+        subtasks.add(subtask.getId());
     }
 
-    public ArrayList<Subtask> getSubtaskList() {
+    public ArrayList<Integer> getSubtaskList() {
         return subtasks;
     }
 
     public void removeSubtask(Subtask subtask) {
-        subtasks.remove(subtask);
+        statuses.remove(subtask.getId());
+        subtasks.remove(subtask.getId());
     }
 
     public void updateSubtask(Subtask subtask) {
-        for (Subtask s : subtasks) {
-            if (s.getId() == subtask.getId()) {
-                subtasks.set(subtasks.indexOf(s), subtask);
+        for (Integer subtaskId : subtasks) {
+            if (subtaskId == subtask.getId()) {
+                statuses.put(subtaskId, subtask.getStatus());
+                subtasks.set(subtasks.indexOf(subtaskId), subtask.getId());
                 return;
             }
         }
@@ -32,23 +37,23 @@ public class Epic extends Task {
 
     @Override
     public Status getStatus() {
-        if (subtasks.isEmpty()) {
+        if (statuses.isEmpty()) {
             return Status.NEW;
         }
         int newTasks = 0;
         int doneTasks = 0;
-        for (Subtask subtask : subtasks) {
-            if (subtask.getStatus() == Status.NEW) {
+        for (Status status : statuses.values()) {
+            if (status == Status.NEW) {
                 newTasks++;
             }
-            if (subtask.getStatus() == Status.DONE) {
+            if (status == Status.DONE) {
                 doneTasks++;
             }
         }
-        if (newTasks == subtasks.size()) {
+        if (newTasks == statuses.size()) {
             return Status.NEW;
         }
-        if (doneTasks == subtasks.size()) {
+        if (doneTasks == statuses.size()) {
             return Status.DONE;
         }
         return Status.IN_PROGRESS;
