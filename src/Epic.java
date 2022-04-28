@@ -28,7 +28,7 @@ public class Epic extends Task {
             }
         }
         if (target != null) {
-            subtasks.add(subtasks.indexOf(target), subtask);
+            subtasks.set(subtasks.indexOf(target), subtask);
         }
     }
 
