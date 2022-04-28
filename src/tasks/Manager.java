@@ -1,3 +1,5 @@
+package tasks;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,19 +10,19 @@ public class Manager {
 
     int currentId = 0;
 
-    int getUniqueID() {
+    public int getUniqueID() {
         return currentId++;
     }
 
-    void createTask(Task task) {
+    public void createTask(Task task) {
         tasks.put(task.getId(), task);
     }
 
-    void createEpic(Epic epic) {
+    public void createEpic(Epic epic) {
         epics.put(epic.getId(), epic);
     }
 
-    void createSubtask(Epic epic, Subtask subtask) {
+    public void createSubtask(Epic epic, Subtask subtask) {
         epic.addSubtask(subtask);
         subtasks.put(subtask.getId(), subtask);
     }
