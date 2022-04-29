@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Epic extends Task {
-    private final ArrayList<Integer> subtasks = new ArrayList<>();
     private final HashMap<Integer,Status> statuses = new HashMap<>();
 
     public Epic(int id, String name, String description) {
@@ -13,25 +12,19 @@ public class Epic extends Task {
 
     public void addSubtask(Subtask subtask) {
         statuses.put(subtask.getId(), subtask.getStatus());
-        subtasks.add(subtask.getId());
     }
 
     public ArrayList<Integer> getSubtaskList() {
-        return subtasks;
+        return new ArrayList<>(statuses.keySet());
     }
 
     public void removeSubtask(Subtask subtask) {
         statuses.remove(subtask.getId());
-        subtasks.remove(subtask.getId());
     }
 
     public void updateSubtask(Subtask subtask) {
-        for (Integer subtaskId : subtasks) {
-            if (subtaskId == subtask.getId()) {
-                statuses.put(subtaskId, subtask.getStatus());
-                subtasks.set(subtasks.indexOf(subtaskId), subtask.getId());
-                return;
-            }
+        if (statuses.containsKey(subtask.getId())){
+            statuses.replace(subtask.getId(), subtask.getStatus());
         }
     }
 
