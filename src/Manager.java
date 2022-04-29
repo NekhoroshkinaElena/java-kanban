@@ -1,4 +1,6 @@
-package tasks;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,8 +107,8 @@ public class Manager {
     }
 
     public ArrayList<Subtask> getEpicSubtasksList(Epic epic) {
-        ArrayList <Subtask> subtasks = new ArrayList<>();
-        for (Integer subtaskID : epic.getSubtaskList()){
+        ArrayList<Subtask> subtasks = new ArrayList<>();
+        for (Integer subtaskID : epic.getSubtaskList()) {
             subtasks.add(this.subtasks.get(subtaskID));
         }
         return subtasks;
@@ -121,7 +123,7 @@ public class Manager {
     }
 
     public void updateSubtask(Subtask subtask) {
-        if(subtasks.containsKey(subtask.getId())) {
+        if (subtasks.containsKey(subtask.getId())) {
             epics.get(subtask.getEpicID()).updateSubtask(subtask);
             subtasks.put(subtask.getId(), subtask);
         }
