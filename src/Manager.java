@@ -61,11 +61,15 @@ public class Manager {
     }
 
     public void clearEpics() {
+        subtasks.clear();
         epics.clear();
     }
 
     public void clearSubtasks() {
         subtasks.clear();
+        for (Epic epic : epics.values()){
+            epic.clearSubtask();
+        }
     }
 
     public Task getTaskByID(int ID) {
