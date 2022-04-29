@@ -23,9 +23,7 @@ public class Epic extends Task {
     }
 
     public void updateSubtask(Subtask subtask) {
-        if (statuses.containsKey(subtask.getId())) {
-            statuses.replace(subtask.getId(), subtask.getStatus());
-        }
+        statuses.replace(subtask.getId(), subtask.getStatus());
     }
 
     public void clearSubtask() {

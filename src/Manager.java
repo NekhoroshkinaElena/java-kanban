@@ -127,9 +127,8 @@ public class Manager {
     }
 
     public void updateSubtask(Subtask subtask) {
-        if (subtasks.containsKey(subtask.getId())) {
+        if (subtasks.replace(subtask.getId(), subtask) != null) {
             epics.get(subtask.getEpicID()).updateSubtask(subtask);
-            subtasks.put(subtask.getId(), subtask);
         }
     }
 }
