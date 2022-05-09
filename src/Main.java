@@ -33,6 +33,21 @@ public class Main {
         System.out.println(manager.getTasks());
         System.out.println(manager.getEpics());
         System.out.println(manager.getSubtasks());
+        System.out.println();
+
+        Task task1 = new Task(manager.getUniqueID(), "Покушать", "съесть мамины блинчики");
+        manager.createTask(task1);
+
+        manager.getEpicByID(epic1.getId());
+        System.out.println(manager.getHistory());
+        System.out.println();
+        manager.getSubtaskByID(subtask.getId());
+        System.out.println(manager.getHistory());
+        System.out.println();
+        manager.getTaskByID(task1.getId());
+
+        System.out.println(manager.getHistory());
+
 
     }
 }
