@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
+
+    int getUniqueID();
+
     ArrayList<Task> getTasks();
 
     ArrayList<Epic> getEpics();

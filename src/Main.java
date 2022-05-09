@@ -3,7 +3,7 @@ import tasks.*;
 public class Main {
 
     public static void main(String[] args) {
-        InMemoryTaskManager manager = new InMemoryTaskManager();
+        TaskManager manager = Managers.getDefault();
         Task task = new Task(manager.getUniqueID(), "Помыть пол", "помыть пол с хлоркой в туалете");
         manager.createTask(task);
         manager.createTask(new Task(manager.getUniqueID(), "Приготовить ужин",
