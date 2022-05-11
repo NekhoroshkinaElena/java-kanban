@@ -14,25 +14,28 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private final HistoryManager history = Managers.getDefaultHistory();
 
-    int currentId = 0;
+    private int currentId = 1;
 
-    @Override
-    public int getUniqueID() {
+    private int getUniqueID() {
         return currentId++;
     }
 
     @Override
     public void createTask(Task task) {
+        task.setId(getUniqueID());
         tasks.put(task.getId(), task);
+
     }
 
     @Override
     public void createEpic(Epic epic) {
+        epic.setId(getUniqueID());
         epics.put(epic.getId(), epic);
     }
 
     @Override
     public void createSubtask(Epic epic, Subtask subtask) {
+        subtask.setId(getUniqueID());
         epic.addSubtask(subtask);
         subtasks.put(subtask.getId(), subtask);
     }
@@ -152,12 +155,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
-        tasks.put(task.getId(), task);
+        tasks.replace(task.getId(), task);
     }
 
     @Override
     public void updateEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
+        epics.replace(epic.getId(), epic);
     }
 
     @Override

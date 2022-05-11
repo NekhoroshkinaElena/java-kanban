@@ -6,8 +6,8 @@ import java.util.HashMap;
 public class Epic extends Task {
     private final HashMap<Integer, Status> statuses = new HashMap<>();
 
-    public Epic(int id, String name, String description) {
-        super(id, name, description);
+    public Epic(String name, String description) {
+        super(name, description);
     }
 
     public void addSubtask(Subtask subtask) {
