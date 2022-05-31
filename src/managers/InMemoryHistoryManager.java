@@ -41,7 +41,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-
     @Override
     public void add(Task task) {
         Node node = map.get(task.getId());
