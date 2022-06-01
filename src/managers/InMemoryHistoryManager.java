@@ -8,7 +8,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     private final Map<Integer, Node> map = new HashMap<>();
     private Node last;
 
-    public void linkLast(Task task) {
+    private void linkLast(Task task) {
         Node node = new Node(task);
         map.put(task.getId(), node);
         if (last != null) {
@@ -18,7 +18,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         last = node;
     }
 
-    public List<Task> getTasks() {
+    private List<Task> getTasks() {
         LinkedList<Task> list = new LinkedList<>();
         Node node = last;
         while (node != null) {
