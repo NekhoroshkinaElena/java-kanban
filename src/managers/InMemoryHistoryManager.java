@@ -29,6 +29,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     public void removeNode(Node node) {
+        if (node == null) {
+            return;
+        }
         map.remove(node.data.getId());
         if (last.equals(node)) {
             last = last.prev;
@@ -43,23 +46,46 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        Node node = map.get(task.getId());
-        if (node != null) {
-            removeNode(node);
-        }
+        remove(task.getId());
         linkLast(task);
     }
 
-    @Override//переопределён метод интерфейса
+    @Override
     public void remove(int id) {
         Node node = map.get(id);
-        if (node != null) {
-            removeNode(node);
-        }
+        removeNode(node);
     }
 
     @Override
     public List<Task> getHistory() {
         return getTasks();
     }
+
+    private static class Node {
+        private final Task data;
+        private Node next;
+        private Node prev;
+
+        public Node(Task data) {
+            this.data = data;
+            this.next = null;
+            this.prev = null;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Node node = (Node) o;
+            return Objects.equals(data, node.data) &&
+                    Objects.equals(next, node.next) &&
+                    Objects.equals(prev, node.prev);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(data, next, prev);
+        }
+    }
 }
+
