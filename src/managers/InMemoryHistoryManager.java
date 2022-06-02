@@ -77,14 +77,12 @@ public class InMemoryHistoryManager implements HistoryManager {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Node node = (Node) o;
-            return Objects.equals(data, node.data) &&
-                    Objects.equals(next, node.next) &&
-                    Objects.equals(prev, node.prev);
+            return Objects.equals(data.getId(), node.data.getId());
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(data, next, prev);
+            return Objects.hash(data.getId());
         }
     }
 }
