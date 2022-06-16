@@ -2,8 +2,8 @@ package managers;
 
 public class Managers {
 
-    public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
+    public static TasksManager getDefault() {
+        return FileBackedTasksManager.loadFromFile("tasks.csv");
     }
 
     public static HistoryManager getDefaultHistory() {

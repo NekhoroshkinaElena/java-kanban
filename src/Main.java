@@ -1,12 +1,12 @@
-import managers.Managers;
-import managers.TaskManager;
+import managers.*;
 import tasks.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager manager = Managers.getDefault();
-        Task task1 = new Task("Task1", "description Task1");//добавлена проверка работы новых методов
+        TasksManager manager = Managers.getDefault();
+
+        Task task1 = new Task("Task1", "description Task1");
         Task task2 = new Task("Task2", "description Task2");
         manager.createTask(task1);
         manager.createTask(task2);
