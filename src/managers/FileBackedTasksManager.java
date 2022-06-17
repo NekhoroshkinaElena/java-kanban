@@ -15,31 +15,40 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     }
 
     public void save() {
-        try (FileWriter fileWriter = new FileWriter(file, false)) {
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(file, false))){
+            bw.write("id,type,name,status,description,epic" + "\n");
             for (Task task : getTasks()) {
-                fileWriter.write(toString(task) + "\n");
+                bw.write(toString(task) + "\n");
             }
             // Записываем эпики перед подзадачами, чтобы при чтении заполнять подзадачи в уже прочитанных эпиках
             for (Epic epic : getEpics()) {
-                fileWriter.write(toString(epic) + "\n");
+                bw.write(toString(epic) + "\n");
             }
             for (Subtask subtask : getSubtasks()) {
-                fileWriter.write(toString(subtask) + "\n");
+                bw.write(toString(subtask) + "\n");
             }
-            fileWriter.write("\n");
-            fileWriter.write(toString(history));
+            bw.write("\n");
+            bw.write(toString(history));
         } catch (IOException e) {
-            throw new ManagerSaveException();
+            throw new ManagerSaveException(e.getMessage());
         }
     }
 
     public static FileBackedTasksManager loadFromFile(String path) {
         FileBackedTasksManager manager = new FileBackedTasksManager(path);
+        if (!manager.file.exists()) {
+            return manager;
+        }
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            boolean skipHeader = true;
             boolean isReadingTasks = true;
             HashMap<Integer, Task> tasks = new HashMap<>();
             while (br.ready()) {
                 String line = br.readLine();
+                if (skipHeader) {
+                    skipHeader = false;
+                    continue;
+                }
                 if (line.isEmpty()) {
                     isReadingTasks = false;
                     continue;
@@ -65,7 +74,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
                 }
             }
         } catch (IOException e) {
-            throw new ManagerLoadException();
+            throw new ManagerLoadException(e.getMessage());
         }
         return manager;
     }
@@ -98,9 +107,13 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
 
     public static String toString(HistoryManager manager) {
         List<Task> history = manager.getHistory();
+        Task last = history.get(history.size() - 1);
         StringBuilder sb = new StringBuilder();
         for (Task task : history) {
-            sb.append(task.getId()).append(",");
+            sb.append(task.getId());
+            if(task != last){
+                sb.append(",");
+            }
         }
         return sb.toString();
     }
