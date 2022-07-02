@@ -10,19 +10,24 @@ public class Main {
         TasksManager manager = Managers.getDefault();
 
         Task task1 = new Task("Task1", "description Task1",
-                LocalDateTime.of(2022, 7, 13, 11, 0, 0), Duration.ofMinutes(60));
+                LocalDateTime.of(2022, 7, 13, 11, 0, 0),
+                Duration.ofMinutes(60));
         Task task2 = new Task("Task2", "description Task2",
-                LocalDateTime.of(2022, 7, 13, 11, 0, 0), Duration.ofMinutes(60));
+                LocalDateTime.of(2022, 7, 13, 11, 0, 0),
+                Duration.ofMinutes(60));
         manager.createTask(task1);
         manager.createTask(task2);
 
         Epic epic1 = new Epic("Epic1", "description Epic");
         Subtask subtask1 = new Subtask("Subtask1", "description Subtask1", epic1,
-                LocalDateTime.of(2022, 7, 13, 11, 0, 0), Duration.ofMinutes(60));
+                LocalDateTime.of(2022, 7, 13, 11, 0, 0),
+                Duration.ofMinutes(60));
         Subtask subtask2 = new Subtask("Subtask2", "description Subtask2", epic1,
-                LocalDateTime.of(2022, 7, 13, 11, 0, 0), Duration.ofMinutes(60));
+                LocalDateTime.of(2022, 7, 13, 11, 0, 0),
+                Duration.ofMinutes(60));
         Subtask subtask3 = new Subtask("Subtask3", "description Subtask3", epic1,
-                LocalDateTime.of(2022, 7, 13, 11, 0, 0), Duration.ofMinutes(60));
+                LocalDateTime.of(2022, 7, 13, 11, 0, 0),
+                Duration.ofMinutes(60));
         manager.createEpic(epic1);
         manager.createSubtask(epic1, subtask1);
         manager.createSubtask(epic1, subtask2);
