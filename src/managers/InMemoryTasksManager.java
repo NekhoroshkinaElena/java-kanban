@@ -1,18 +1,17 @@
 package managers;
 
+import java.util.*;
+
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class InMemoryTasksManager implements TasksManager {
     protected final HashMap<Integer, Task> tasks = new HashMap<>();
     protected final HashMap<Integer, Epic> epics = new HashMap<>();
     protected final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     protected final HistoryManager history = Managers.getDefaultHistory();
+    protected final Set<Task> tasksSet = new TreeSet<>();
 
     private int currentId = 1;
 
@@ -20,24 +19,49 @@ public class InMemoryTasksManager implements TasksManager {
         return currentId++;
     }
 
+    private boolean isIntersect(Task task) {
+        for (Task t : tasksSet) {
+            if (t.isIntersect(task)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void createTask(Task task) {
+        if (task == null || isIntersect(task)) {
+            return;
+        }
         task.setId(getUniqueID());
         tasks.put(task.getId(), task);
+        tasksSet.add(task);
     }
 
     @Override
     public void createEpic(Epic epic) {
+        if(epic == null){
+            return;
+        }
         epic.setId(getUniqueID());
         epics.put(epic.getId(), epic);
     }
 
     @Override
     public void createSubtask(Epic epic, Subtask subtask) {
+        if (epic == null || subtask == null || isIntersect(subtask)) {
+            return;
+        }
+        epic = epics.get(epic.getId());
+        if (epic == null) {
+            return;
+        }
+
         subtask.setId(getUniqueID());
         subtask.setEpicId(epic.getId());
         epic.addSubtask(subtask);
         subtasks.put(subtask.getId(), subtask);
+        tasksSet.add(subtask);
     }
 
     @Override
@@ -72,17 +96,21 @@ public class InMemoryTasksManager implements TasksManager {
 
     @Override
     public void clearTasks() {
+        tasks.forEach((taskId, task) -> tasksSet.remove(task));
         tasks.clear();
     }
 
     @Override
     public void clearEpics() {
+        epics.forEach((epicId, epic) -> tasksSet.remove(epic));
+        subtasks.forEach((subtaskId, subtask) -> tasksSet.remove(subtask));
         subtasks.clear();
         epics.clear();
     }
 
     @Override
     public void clearSubtasks() {
+        subtasks.forEach((subtaskId, subtask) -> tasksSet.remove(subtask));
         subtasks.clear();
         for (Epic epic : epics.values()) {
             epic.clearSubtask();
@@ -123,10 +151,16 @@ public class InMemoryTasksManager implements TasksManager {
         }
         epics.remove(id);
         history.remove(id);
+        tasksSet.remove(epic);
     }
 
     @Override
     public void removeTask(int id) {
+        Task task = getTaskByID(id);
+        if (task == null) {
+            return;
+        }
+        tasksSet.remove(task);
         tasks.remove(id);
         history.remove(id);
     }
@@ -141,6 +175,7 @@ public class InMemoryTasksManager implements TasksManager {
         epic.removeSubtask(subtask);
         subtasks.remove(id);
         history.remove(id);
+        tasksSet.remove(subtask);
     }
 
     @Override
@@ -159,18 +194,46 @@ public class InMemoryTasksManager implements TasksManager {
 
     @Override
     public void updateTask(Task task) {
-        tasks.replace(task.getId(), task);
+        Task oldTask = tasks.get(task.getId());
+        if (oldTask == null) {
+            return;
+        }
+        tasks.remove(oldTask.getId());
+        tasksSet.remove(oldTask);
+        if (isIntersect(task)) {
+            tasks.put(oldTask.getId(), oldTask);
+            tasksSet.add(oldTask);
+            return;
+        }
+        tasks.put(task.getId(), task);
+        tasksSet.add(task);
     }
 
     @Override
     public void updateEpic(Epic epic) {
+        if(epic == null){
+            return;
+        }
         epics.replace(epic.getId(), epic);
     }
 
     @Override
     public void updateSubtask(Subtask subtask) {
-        if (subtasks.replace(subtask.getId(), subtask) != null) {
-            epics.get(subtask.getEpicId()).updateSubtask(subtask);
+        if (isIntersect(subtask)) {
+            return;
         }
+        Subtask oldSubtask = subtasks.get(subtask.getId());
+        if (oldSubtask == null) {
+            return;
+        }
+        subtasks.replace(subtask.getId(), subtask);
+        epics.get(subtask.getEpicId()).updateSubtask(subtask);
+        tasksSet.remove(oldSubtask);
+        tasksSet.add(subtask);
+    }
+
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(tasksSet);
     }
 }

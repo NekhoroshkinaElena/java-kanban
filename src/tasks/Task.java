@@ -1,24 +1,35 @@
 package tasks;
 
-public class Task {
+import java.time.Duration;
+import java.time.LocalDateTime;
+
+public class Task implements Comparable<Task> {
     private int id;
     private final String name;
     private final String description;
     private final Status status;
+    private final Duration duration;//продолжительность задачи
+    private final LocalDateTime startTime;//добавила новое поле запланированное начало
 
-    public Task(String name, String description) {
-        this(name, description, Status.NEW);
+    public Task(String name, String description, LocalDateTime startTime, Duration duration) {
+        this(name, description, Status.NEW, startTime, duration);
     }
 
-    public Task(String name, String description, Status status) {
-        this(0, name, description, status);
+    public Task(String name, String description, Status status, LocalDateTime startTime, Duration duration) {
+        this(0, name, description, status, startTime, duration);
     }
 
-    public Task(int id, String name, String description, Status status) {
+    public Task(int id, String name, String description, Status status, LocalDateTime startTime, Duration duration) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
+        this.startTime = startTime;
+        this.duration = (duration == null) ? Duration.ZERO : duration;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
     }
 
     public Status getStatus() {
@@ -26,13 +37,10 @@ public class Task {
     }
 
     @Override
-    public String toString() {
-        return "Task{" +
-                "ID=" + getId() +
-                ", name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", status=" + getStatus() +
-                '}';
+    public int compareTo(Task task) {
+        LocalDateTime thisStartTime = (this.getStartTime() == null) ? LocalDateTime.MAX : this.getStartTime();
+        LocalDateTime taskStartTime = (task.getStartTime() == null) ? LocalDateTime.MAX : task.getStartTime();
+        return thisStartTime.compareTo(taskStartTime);
     }
 
     public int getId() {
@@ -49,6 +57,33 @@ public class Task {
 
     public String getDescription() {
         return description;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public boolean isIntersect(Task task) {
+        if (task == null || task.getStartTime() == null || this.getStartTime() == null) {
+            return false;
+        }
+        return !this.getEndTime().isBefore(task.getStartTime()) && !this.getStartTime().isAfter(task.getEndTime());
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", duration=" + duration.toMinutes() +
+                ", startTime=" + startTime +
+                '}';
     }
 }
 

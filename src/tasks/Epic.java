@@ -1,62 +1,97 @@
 package tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Epic extends Task {
-    private final HashMap<Integer, Status> statuses = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+
 
     public Epic(String name, String description) {
-        super(name, description);
+        super(name, description, null, Duration.ZERO);
     }
 
     public Epic(int id, String name, String description, Status status) {
-        super(id, name, description, status);
+        super(id, name, description, status, null, Duration.ZERO);
     }
 
     public void addSubtask(Subtask subtask) {
-        statuses.put(subtask.getId(), subtask.getStatus());
+        this.subtasks.put(subtask.getId(), subtask);
     }
 
     public ArrayList<Integer> getSubtaskList() {
-        return new ArrayList<>(statuses.keySet());
+        return new ArrayList<>(subtasks.keySet());
     }
 
     public void removeSubtask(Subtask subtask) {
-        statuses.remove(subtask.getId());
+        this.subtasks.remove(subtask.getId());
     }
 
     public void updateSubtask(Subtask subtask) {
-        statuses.replace(subtask.getId(), subtask.getStatus());
+        this.subtasks.replace(subtask.getId(), subtask);
     }
 
     public void clearSubtask() {
-        statuses.clear();
+        subtasks.clear();
     }
 
     @Override
     public Status getStatus() {
-        if (statuses.isEmpty()) {
+        if (subtasks.isEmpty()) {
             return Status.NEW;
         }
         int newTasks = 0;
         int doneTasks = 0;
-        for (Status status : statuses.values()) {
-            if (status == Status.NEW) {
+        for (Subtask subtask : subtasks.values()) {
+            if (subtask.getStatus() == Status.NEW) {
                 newTasks++;
             }
-            if (status == Status.DONE) {
+            if (subtask.getStatus() == Status.DONE) {
                 doneTasks++;
             }
         }
-        if (newTasks == statuses.size()) {
+        if (newTasks == subtasks.size()) {
             return Status.NEW;
         }
-        if (doneTasks == statuses.size()) {
+        if (doneTasks == subtasks.size()) {
             return Status.DONE;
         }
         return Status.IN_PROGRESS;
     }
+
+    @Override
+    public LocalDateTime getStartTime() {
+        if (subtasks.isEmpty()) {
+            return null;
+        }
+        LocalDateTime dateTime = LocalDateTime.MAX;
+        for (Subtask subtask : subtasks.values()) {
+            if (subtask.getStartTime().isBefore(dateTime)) {
+                dateTime = subtask.getStartTime();
+            }
+        }
+        return dateTime;
+    }
+
+    @Override
+    public Duration getDuration() {
+
+        if (subtasks.isEmpty()) {
+            return Duration.ZERO;
+        }
+        Duration duration = Duration.ZERO;
+        for (Subtask subtask : subtasks.values()) {
+            duration = duration.plus(subtask.getDuration());
+        }
+        return duration;
+    }
+
+    public LocalDateTime getEndTime() {
+        return getStartTime().plus(getDuration());
+    }
+
 
     @Override
     public String toString() {
@@ -65,6 +100,8 @@ public class Epic extends Task {
                 ", name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() +
+                ", duration=" + getDuration().toMinutes() +
+                ", startTime=" + getStartTime() +
                 '}';
     }
 }
