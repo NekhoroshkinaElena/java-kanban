@@ -40,7 +40,7 @@ public class InMemoryTasksManager implements TasksManager {
 
     @Override
     public void createEpic(Epic epic) {
-        if(epic == null){
+        if (epic == null) {
             return;
         }
         epic.setId(getUniqueID());
@@ -211,7 +211,7 @@ public class InMemoryTasksManager implements TasksManager {
 
     @Override
     public void updateEpic(Epic epic) {
-        if(epic == null){
+        if (epic == null) {
             return;
         }
         epics.replace(epic.getId(), epic);
