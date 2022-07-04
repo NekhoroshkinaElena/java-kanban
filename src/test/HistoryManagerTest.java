@@ -1,11 +1,11 @@
-package managers;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import managers.HistoryManager;
+import managers.Managers;
 import tasks.Epic;
 import tasks.Status;
 import tasks.Subtask;
@@ -76,12 +76,12 @@ class HistoryManagerTest {
         assertEquals(4, historyManager.getHistory().size());
 
         historyManager.remove(task.getId());
-        assertEquals(new ArrayList<>(Arrays.asList(epic, subtask, subtask2)), historyManager.getHistory());
+        assertEquals(List.of(epic, subtask, subtask2), historyManager.getHistory());
 
         historyManager.remove(subtask.getId());
-        assertEquals(new ArrayList<>(Arrays.asList(epic, subtask2)), historyManager.getHistory());
+        assertEquals(List.of(epic, subtask2), historyManager.getHistory());
 
         historyManager.remove(subtask2.getId());
-        assertEquals(new ArrayList<>(List.of(epic)), historyManager.getHistory());
+        assertEquals(List.of(epic), historyManager.getHistory());
     }
 }

@@ -2,14 +2,15 @@ package tasks;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Task implements Comparable<Task> {
     private int id;
     private final String name;
     private final String description;
     private final Status status;
-    private final Duration duration;//продолжительность задачи
-    private final LocalDateTime startTime;//добавила новое поле запланированное начало
+    private final Duration duration;
+    private final LocalDateTime startTime;
 
     public Task(String name, String description, LocalDateTime startTime, Duration duration) {
         this(name, description, Status.NEW, startTime, duration);
@@ -84,6 +85,19 @@ public class Task implements Comparable<Task> {
                 ", duration=" + duration.toMinutes() +
                 ", startTime=" + startTime +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, status, duration, startTime);
     }
 }
 

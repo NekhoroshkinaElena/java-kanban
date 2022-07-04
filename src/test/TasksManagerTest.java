@@ -1,10 +1,9 @@
-package managers;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import managers.TasksManager;
 import tasks.Epic;
 import tasks.Status;
 import tasks.Subtask;
@@ -258,11 +257,13 @@ abstract class TasksManagerTest<T extends TasksManager> {
         tasksManager.createSubtask(epic, subtask);
 
         Subtask subtaskUpdate = new Subtask(subtask.getId(), "S U", "D U", Status.IN_PROGRESS,
-                epic.getId(), LocalDateTime.of(2022, 7, 13, 0, 0, 0),
+                epic.getId(), LocalDateTime.of(2022, 7, 13, 11, 0, 0),
                 Duration.ofMinutes(60));
         tasksManager.updateSubtask(subtaskUpdate);
         assertEquals(subtaskUpdate, tasksManager.getSubtaskByID(subtask.getId()));
         assertEquals(Status.IN_PROGRESS, epic.getStatus());
+        assertEquals(List.of(subtaskUpdate), tasksManager.getPrioritizedTasks());
+        assertEquals(List.of(subtaskUpdate.getId()),epic.getSubtaskList());
     }
 
     @Test

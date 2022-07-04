@@ -13,7 +13,11 @@ public class InMemoryTasksManager implements TasksManager {
     protected final HistoryManager history = Managers.getDefaultHistory();
     protected final Set<Task> tasksSet = new TreeSet<>();
 
-    private int currentId = 1;
+    protected int currentId = 1;
+
+    public int getCurrentId() {
+        return currentId;
+    }
 
     private int getUniqueID() {
         return currentId++;
@@ -194,6 +198,9 @@ public class InMemoryTasksManager implements TasksManager {
 
     @Override
     public void updateTask(Task task) {
+        if(task == null){
+            return;
+        }
         Task oldTask = tasks.get(task.getId());
         if (oldTask == null) {
             return;
@@ -219,16 +226,22 @@ public class InMemoryTasksManager implements TasksManager {
 
     @Override
     public void updateSubtask(Subtask subtask) {
-        if (isIntersect(subtask)) {
+        if(subtask == null){
             return;
         }
         Subtask oldSubtask = subtasks.get(subtask.getId());
-        if (oldSubtask == null) {
+        if(oldSubtask == null){
             return;
         }
-        subtasks.replace(subtask.getId(), subtask);
-        epics.get(subtask.getEpicId()).updateSubtask(subtask);
+        subtasks.remove(oldSubtask.getId());
         tasksSet.remove(oldSubtask);
+        if (isIntersect(subtask)) {
+            subtasks.put(oldSubtask.getId(), oldSubtask);
+            tasksSet.add(oldSubtask);
+            return;
+        }
+        subtasks.put(subtask.getId(), subtask);
+        epics.get(subtask.getEpicId()).updateSubtask(subtask);
         tasksSet.add(subtask);
     }
 
