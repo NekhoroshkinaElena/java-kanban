@@ -97,7 +97,7 @@ public class Task implements Comparable<Task> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, status, duration, startTime);
+        return Objects.hash(id);
     }
 }
 
