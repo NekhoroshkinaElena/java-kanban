@@ -8,7 +8,6 @@ import java.util.HashMap;
 public class Epic extends Task {
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
-
     public Epic(String name, String description) {
         super(name, description, null, Duration.ZERO);
     }
@@ -91,7 +90,6 @@ public class Epic extends Task {
     public LocalDateTime getEndTime() {
         return getStartTime().plus(getDuration());
     }
-
 
     @Override
     public String toString() {

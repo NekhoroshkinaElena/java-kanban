@@ -263,7 +263,7 @@ abstract class TasksManagerTest<T extends TasksManager> {
         assertEquals(subtaskUpdate, tasksManager.getSubtaskByID(subtask.getId()));
         assertEquals(Status.IN_PROGRESS, epic.getStatus());
         assertEquals(List.of(subtaskUpdate), tasksManager.getPrioritizedTasks());
-        assertEquals(List.of(subtaskUpdate.getId()),epic.getSubtaskList());
+        assertEquals(List.of(subtaskUpdate.getId()), epic.getSubtaskList());
     }
 
     @Test

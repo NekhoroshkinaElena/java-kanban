@@ -198,7 +198,7 @@ public class InMemoryTasksManager implements TasksManager {
 
     @Override
     public void updateTask(Task task) {
-        if(task == null){
+        if (task == null) {
             return;
         }
         Task oldTask = tasks.get(task.getId());
@@ -226,11 +226,11 @@ public class InMemoryTasksManager implements TasksManager {
 
     @Override
     public void updateSubtask(Subtask subtask) {
-        if(subtask == null){
+        if (subtask == null) {
             return;
         }
         Subtask oldSubtask = subtasks.get(subtask.getId());
-        if(oldSubtask == null){
+        if (oldSubtask == null) {
             return;
         }
         subtasks.remove(oldSubtask.getId());

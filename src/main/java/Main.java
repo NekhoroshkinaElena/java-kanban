@@ -1,13 +1,21 @@
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import http.HttpTaskServer;
+import http.KVServer;
 import managers.*;
 import tasks.*;
 
 public class Main {
 
-    public static void main(String[] args) {
-        TasksManager manager = Managers.getDefault();
+    public static void main(String[] args) throws IOException {
+        KVServer kvServer = new KVServer();
+        kvServer.start();
+        HttpTaskServer httpTaskServer = new HttpTaskServer();
+        httpTaskServer.start();
+
+        TasksManager manager = httpTaskServer.tasksManager;
 
         Task task1 = new Task("Task1", "description Task1",
                 LocalDateTime.of(2022, 7, 13, 11, 0, 0),
@@ -59,14 +67,15 @@ public class Main {
         System.out.println();
         System.out.println(manager.getHistory());
 
-        manager.removeTask(task1.getId());
         System.out.println();
 
         System.out.println(manager.getHistory());
         System.out.println();
 
-        manager.removeEpic(epic1.getId());
         System.out.println();
         System.out.println(manager.getHistory());
+
+//        kvServer.stop();
+//        httpTaskServer.stop();
     }
 }

@@ -17,7 +17,15 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     }
 
     public void save() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, false))) {
+        try {
+            write(new FileWriter(file, false));
+        } catch (IOException e) {
+            throw new ManagerLoadException(e.getMessage());
+        }
+    }
+
+    protected void write(Writer writer) {
+        try (BufferedWriter bw = new BufferedWriter(writer)) {
             bw.write("id,type,name,status,description,startTime,duration,epic" + "\n");
             for (Task task : getTasks()) {
                 bw.write(toString(task) + "\n");
@@ -36,18 +44,14 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
         }
     }
 
-    public static FileBackedTasksManager loadFromFile(String path) {
-        FileBackedTasksManager manager = new FileBackedTasksManager(path);
-        if (!manager.file.exists()) {
-            return manager;
-        }
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+    protected void read(Reader reader) {
+        try (BufferedReader br = new BufferedReader(reader)) {
             boolean skipHeader = true;
             boolean isReadingTasks = true;
             HashMap<Integer, Task> tasks = new HashMap<>();
             int maxId = 1;
-            while (br.ready()) {
-                String line = br.readLine();
+            String line;
+            while ((line = br.readLine()) != null) {
                 if (skipHeader) {
                     skipHeader = false;
                     continue;
@@ -63,26 +67,38 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
                     }
                     tasks.put(task.getId(), task);
                     if (task.getClass() == Epic.class) {
-                        manager.epics.put(task.getId(), (Epic) task);
+                        this.epics.put(task.getId(), (Epic) task);
                         continue;
                     }
                     if (task.getClass() == Subtask.class) {
                         Subtask subtask = (Subtask) task;
-                        manager.epics.get(subtask.getEpicId()).addSubtask(subtask);
-                        manager.subtasks.put(task.getId(), subtask);
-                        manager.tasksSet.add(task);
+                        this.epics.get(subtask.getEpicId()).addSubtask(subtask);
+                        this.subtasks.put(task.getId(), subtask);
+                        this.tasksSet.add(task);
                         continue;
                     }
-                    manager.tasks.put(task.getId(), task);
-                    manager.tasksSet.add(task);
+                    this.tasks.put(task.getId(), task);
+                    this.tasksSet.add(task);
                 } else {
                     for (int id : fromString(line)) {
-                        manager.history.add(tasks.get(id));
+                        this.history.add(tasks.get(id));
                     }
                 }
             }
-            manager.currentId = maxId;
+            this.currentId = maxId;
         } catch (IOException e) {
+            throw new ManagerLoadException(e.getMessage());
+        }
+    }
+
+    public static FileBackedTasksManager loadFromFile(String path) {
+        FileBackedTasksManager manager = new FileBackedTasksManager(path);
+        if (!manager.file.exists()) {
+            return manager;
+        }
+        try {
+            manager.read(new FileReader(path));
+        } catch (FileNotFoundException e) {
             throw new ManagerLoadException(e.getMessage());
         }
         return manager;
