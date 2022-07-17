@@ -16,13 +16,15 @@ public class KVClient {
         this.url = url;
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url.toString() + "/register"))
+                .uri(URI.create(url.toString() + KVPaths.REGISTER))
                 .GET()
                 .build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 apiToken = response.body();
+            } else {
+                throw new EmptyApiTokenException("api token not set");
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -31,7 +33,7 @@ public class KVClient {
 
     public String load(String key) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url.toString() + "/load/" + key + "?API_TOKEN=" + apiToken))
+                .uri(URI.create(url.toString() + KVPaths.LOAD + key + "?API_TOKEN=" + apiToken))
                 .GET()
                 .build();
         String result = "";
@@ -49,7 +51,7 @@ public class KVClient {
 
     public void put(String key, String value) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url.toString() + "/save/" + key + "?API_TOKEN=" + apiToken))
+                .uri(URI.create(url.toString() + KVPaths.SAVE + key + "?API_TOKEN=" + apiToken))
                 .POST(HttpRequest.BodyPublishers.ofString(value))
                 .build();
         try {

@@ -2,7 +2,6 @@ import http.HttpTaskServer;
 import http.KVServer;
 import managers.TasksManager;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.*;
@@ -20,7 +19,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class HTTPTaskServetTest {
+public class HTTPTaskServerTest {
     String url = "http://localhost:8080";
     HttpTaskServer httpTaskServer;
     KVServer kvServer;
