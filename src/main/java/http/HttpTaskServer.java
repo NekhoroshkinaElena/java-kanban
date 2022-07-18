@@ -42,7 +42,7 @@ public class HttpTaskServer {
 
     public void tasksPrioritized(HttpExchange httpExchange) throws IOException {
         if (isGet(httpExchange)) {
-            sendResponse(httpExchange, gson.toJson(tasksManager.getPrioritizedTasks()));
+            SendOkResponse(httpExchange, gson.toJson(tasksManager.getPrioritizedTasks()));
         }
         sendBadRequest(httpExchange, "");
     }
@@ -51,10 +51,10 @@ public class HttpTaskServer {
         if (isGet(httpExchange)) {
             String query = httpExchange.getRequestURI().getQuery();
             if (query == null) {
-                sendResponse(httpExchange, gson.toJson(tasksManager.getTasks()));
+                SendOkResponse(httpExchange, gson.toJson(tasksManager.getTasks()));
             } else {
                 int id = queryToMap(query);
-                sendResponse(httpExchange, gson.toJson(tasksManager.getTaskByID(id)));
+                SendOkResponse(httpExchange, gson.toJson(tasksManager.getTaskByID(id)));
             }
         }
         if (isPost(httpExchange)) {
@@ -72,14 +72,14 @@ public class HttpTaskServer {
             if (tasksManager.getTaskByID(task.getId()) == null) {
                 tasksManager.createTask(task);
                 if (tasksManager.getTaskByID(task.getId()) != null) {
-                    sendResponse(httpExchange, "Task create");
+                    SendOkResponse(httpExchange, "Task create");
                 } else {
                     sendBadRequest(httpExchange, "Задача не была создана, так как она " +
                             "пересекается по времени с другой задачей");
                 }
             } else {
                 tasksManager.updateTask(task);
-                sendResponse(httpExchange, "Task Update");
+                SendOkResponse(httpExchange, "Task Update");
             }
         }
         if (isDelete(httpExchange)) {
@@ -87,13 +87,13 @@ public class HttpTaskServer {
             if (query == null) {
                 tasksManager.clearTasks();
                 if (tasksManager.getTasks().isEmpty()) {
-                    sendResponse(httpExchange, "Tasks clear");
+                    SendOkResponse(httpExchange, "Tasks clear");
                 }
             } else {
                 int id = queryToMap(query);
                 tasksManager.removeTask(id);
                 if (tasksManager.getTaskByID(id) == null) {
-                    sendResponse(httpExchange, "Task remove");
+                    SendOkResponse(httpExchange, "Task remove");
                 }
             }
         }
@@ -103,11 +103,11 @@ public class HttpTaskServer {
         if (isGet(httpExchange)) {
             String query = httpExchange.getRequestURI().getQuery();
             if (query == null) {
-                sendResponse(httpExchange, gson.toJson(tasksManager.getSubtasks()));
+                SendOkResponse(httpExchange, gson.toJson(tasksManager.getSubtasks()));
             }
             if (query != null) {
                 int id = queryToMap(query);
-                sendResponse(httpExchange, gson.toJson(tasksManager.getSubtaskByID(id)));
+                SendOkResponse(httpExchange, gson.toJson(tasksManager.getSubtaskByID(id)));
             }
         }
         if (isPost(httpExchange)) {
@@ -125,11 +125,11 @@ public class HttpTaskServer {
             if (tasksManager.getSubtaskByID(subtask.getId()) == null) {
                 tasksManager.createSubtask(tasksManager.getEpicByID(subtask.getEpicId()), subtask);
                 if (tasksManager.getSubtaskByID(subtask.getId()) != null) {
-                    sendResponse(httpExchange, "Subtask create");
+                    SendOkResponse(httpExchange, "Subtask create");
                 }
             } else if (tasksManager.getSubtaskByID(subtask.getId()) != null) {
                 tasksManager.updateSubtask(subtask);
-                sendResponse(httpExchange, "Subtask update");
+                SendOkResponse(httpExchange, "Subtask update");
             }
         }
         if (isDelete(httpExchange)) {
@@ -137,13 +137,13 @@ public class HttpTaskServer {
             if (query == null) {
                 tasksManager.clearSubtasks();
                 if (tasksManager.getSubtasks().isEmpty()) {
-                    sendResponse(httpExchange, "Subtasks clear");
+                    SendOkResponse(httpExchange, "Subtasks clear");
                 }
             } else {
                 int id = queryToMap(query);
                 tasksManager.removeSubtask(id);
                 if (tasksManager.getSubtaskByID(id) == null) {
-                    sendResponse(httpExchange, "Subtask remove");
+                    SendOkResponse(httpExchange, "Subtask remove");
                 }
             }
         }
@@ -153,11 +153,11 @@ public class HttpTaskServer {
         if (isGet(httpExchange)) {
             String query = httpExchange.getRequestURI().getQuery();
             if (query == null) {
-                sendResponse(httpExchange, gson.toJson(tasksManager.getEpics()));
+                SendOkResponse(httpExchange, gson.toJson(tasksManager.getEpics()));
             }
             if (query != null) {
                 int id = queryToMap(query);
-                sendResponse(httpExchange, gson.toJson(tasksManager.getEpicByID(id)));
+                SendOkResponse(httpExchange, gson.toJson(tasksManager.getEpicByID(id)));
             }
         }
         if (isPost(httpExchange)) {
@@ -178,11 +178,11 @@ public class HttpTaskServer {
             if (tasksManager.getEpicByID(epic.getId()) == null) {
                 tasksManager.createEpic(epic);
                 if (tasksManager.getEpicByID(epic.getId()) != null) {
-                    sendResponse(httpExchange, "Epic create");
+                    SendOkResponse(httpExchange, "Epic create");
                 }
             } else if (tasksManager.getEpicByID(epic.getId()) != null) {
                 tasksManager.updateEpic(epic);
-                sendResponse(httpExchange, "Epic update");
+                SendOkResponse(httpExchange, "Epic update");
             }
         }
         if (isDelete(httpExchange)) {
@@ -190,13 +190,13 @@ public class HttpTaskServer {
             if (query == null) {
                 tasksManager.clearEpics();
                 if (tasksManager.getEpics().isEmpty()) {
-                    sendResponse(httpExchange, "Epics clear");
+                    SendOkResponse(httpExchange, "Epics clear");
                 }
             } else {
                 int id = queryToMap(query);
                 tasksManager.removeEpic(id);
                 if (tasksManager.getEpicByID(id) == null) {
-                    sendResponse(httpExchange, "Epic remove");
+                    SendOkResponse(httpExchange, "Epic remove");
                 }
             }
         }
@@ -207,14 +207,14 @@ public class HttpTaskServer {
             String query = httpExchange.getRequestURI().getQuery();
             if (!query.isEmpty()) {
                 int id = queryToMap(query);
-                sendResponse(httpExchange, gson.toJson(tasksManager.getEpicSubtasksList(tasksManager.getEpicByID(id))));
+                SendOkResponse(httpExchange, gson.toJson(tasksManager.getEpicSubtasksList(tasksManager.getEpicByID(id))));
             }
         }
     }
 
     public void history(HttpExchange httpExchange) throws IOException {
         if (isGet(httpExchange)) {
-            sendResponse(httpExchange, gson.toJson(tasksManager.getHistory()));
+            SendOkResponse(httpExchange, gson.toJson(tasksManager.getHistory()));
         }
     }
 
@@ -230,7 +230,7 @@ public class HttpTaskServer {
         return "DELETE".equals(httpExchange.getRequestMethod());
     }
 
-    private void sendResponse(HttpExchange httpExchange, String response) throws IOException {
+    private void SendOkResponse(HttpExchange httpExchange, String response) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes());
